@@ -18,32 +18,43 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
     Raises:
         TypeError: If the object cannot be serialized
     """
+    # Special handling for non-serializable objects
     def safe_serialize(obj):
-        """Safely serialize an object"""
+        """Try to convert object to a serializable format"""
         try:
-            # Attempt to convert to dictionary
+            # If it has a __dict__ attribute, convert to dictionary
             if hasattr(obj, '__dict__'):
-                return vars(obj)
+                raise TypeError("Custom object serialization needed")
             return obj
         except Exception:
-            return str(obj)
+            return f"Error logging object: Unable to serialize {type(obj)}"
 
     try:
+        # Use JSON for serialization if requested
         if use_json:
-            # Use JSON for serialization with custom formatting
             return json.dumps(obj, indent=indent)
         
-        # Special handling for non-serializable objects
+        # Check if object can be serialized
         try:
-            # Try to serialize the object
-            serializable_obj = safe_serialize(obj)
-            
             # Use pprint for formatting
             formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            return formatter.pformat(serializable_obj)
-        except Exception as e:
-            # Fallback error message
+            result = formatter.pformat(obj)
+            
+            # If max_width is less than standard, attempt to wrap
+            if max_width < 80:
+                # Split the result and wrap each line
+                wrapped_lines = []
+                for line in result.split('\n'):
+                    if len(line) > max_width:
+                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
+                    else:
+                        wrapped_lines.append(line)
+                return '\n'.join(wrapped_lines)
+            
+            return result
+        except Exception:
+            # Fallback for custom/non-serializable objects
             return f"Error logging object: Unable to serialize {type(obj)}"
     except Exception as e:
-        # Catch-all for any remaining serialization errors
+        # Final catch-all
         return f"Error logging object: {str(e)}"
