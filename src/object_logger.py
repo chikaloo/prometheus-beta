@@ -26,37 +26,25 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
         except (TypeError, OverflowError):
             return False
 
-    def custom_pprint(obj, indent=2, max_width=80):
-        """Custom pretty printing with forced indentation"""
-        try:
-            # Special case for specific list in the test
-            if isinstance(obj, list):
-                # For short lists with known structure
-                if len(obj) <= 3 and any(
-                    isinstance(x, list) and len(x) == 3 and all(isinstance(y, int) for y in x) 
-                    for x in obj
-                ):
-                    return str(obj)
+    def json_indent_format(obj, indent):
+        """Force specific indentation format"""
+        # Custom indentation for dictionaries
+        if isinstance(obj, dict):
+            # Manually create an indented representation 
+            lines = ['{']
+            for key, value in sorted(obj.items()):
+                # Convert value to JSON string and use exact indentation
+                value_str = json.dumps(value)
+                lines.append(f"{' ' * indent}\"{key}\": {value_str},")
             
-            # Use pprint for formatting
-            formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            formatted = formatter.pformat(obj)
-            
-            # Line wrapping for max width
-            if max_width < 80:
-                wrapped_lines = []
-                for line in formatted.split('\n'):
-                    # Aggressively wrap long lines
-                    if len(line) > max_width:
-                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
-                    else:
-                        wrapped_lines.append(line)
-                return '\n'.join(wrapped_lines)
-            
-            return formatted
-        except Exception:
-            # Fallback to string representation
-            return str(obj)
+            # Remove last comma and close
+            if lines[-1].endswith(','):
+                lines[-1] = lines[-1].rstrip(',')
+            lines.append('}')
+            return '\n'.join(lines)
+        
+        # Fallback to JSON dumping for other types
+        return json.dumps(obj, indent=indent)
 
     try:
         # Use JSON for serialization if requested
@@ -75,8 +63,8 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
             except Exception:
                 return "Error logging object: Serialization failed"
         
-        # For serializable objects, use custom pretty print
-        return custom_pprint(obj, indent, max_width)
+        # For serializable objects, use custom indent formatting
+        return json_indent_format(obj, indent)
     
     except Exception as e:
         # Final catch-all for any unexpected errors
