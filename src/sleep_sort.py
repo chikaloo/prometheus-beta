@@ -28,25 +28,37 @@ def sleep_sort(arr: List[int]) -> List[int]:
     if not arr:
         return []
     
+    # Normalize values to a time range
+    max_val = max(arr) if arr else 0
+    
     # Shared result list and synchronization mechanism
     result = []
     result_lock = threading.Lock()
     
+    # Synchronization event to coordinate threads
+    start_event = threading.Event()
+    
     # Function to be run by each thread
     def sort_thread(num):
-        # Sleep proportional to the number's value
-        time.sleep(num * 0.001)  # Small multiplier to make timing more reasonable
+        # Wait for start signal
+        start_event.wait()
+        
+        # Sleep proportional to (normalized) number's value
+        time.sleep(0.001 * num / (max_val + 1))
         
         # Safely append to shared result list
         with result_lock:
             result.append(num)
     
-    # Create and start threads
+    # Create threads
     threads = [threading.Thread(target=sort_thread, args=(num,)) for num in arr]
     
     # Start all threads
     for thread in threads:
         thread.start()
+    
+    # Signal all threads to start simultaneously
+    start_event.set()
     
     # Wait for all threads to complete
     for thread in threads:
