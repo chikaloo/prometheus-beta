@@ -23,23 +23,21 @@ def find_most_frequent_char(input_string):
         return None
     
     # Count character frequencies
+    char_order = {}
     char_counts = {}
-    for char in input_string:
+    for i, char in enumerate(input_string):
         char_counts[char] = char_counts.get(char, 0) + 1
+        if char not in char_order:
+            char_order[char] = i
     
-    # Find the first character with max frequency from left to right
+    # Find max frequency
     max_freq = max(char_counts.values())
     
-    # Special handling for whitespace-heavy inputs
-    non_space_chars = [char for char in input_string if not char.isspace()]
+    # Find the first character that appears with max frequency
+    candidates = [char for char, count in char_counts.items() if count == max_freq]
     
-    # If there are non-space characters with max frequency, return the first one
-    if non_space_chars:
-        for char in input_string:
-            if char_counts[char] == max_freq and char in non_space_chars:
-                return char
+    # Prioritize non-whitespace characters
+    non_space = [char for char in candidates if not char.isspace()]
     
-    # Fallback to first character with max frequency
-    for char in input_string:
-        if char_counts[char] == max_freq:
-            return char
+    # Return first non-space character if exists, else first candidate
+    return non_space[0] if non_space else min(candidates, key=char_order.get)
