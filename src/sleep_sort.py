@@ -1,4 +1,4 @@
-import threading
+import concurrent.futures
 import time
 from typing import List
 
@@ -7,9 +7,7 @@ def sleep_sort(arr: List[int]) -> List[int]:
     """
     Implement the sleep sort algorithm.
     
-    Sleep sort works by creating a separate thread for each number, 
-    where each thread sleeps for a duration proportional to the number's value,
-    and then adds the number to the result list.
+    Uses a thread pool to sort numbers based on their values.
     
     Args:
         arr (List[int]): Input list of non-negative integers to be sorted.
@@ -28,40 +26,27 @@ def sleep_sort(arr: List[int]) -> List[int]:
     if not arr:
         return []
     
-    # Normalize values to a time range
+    # Sort mechanism with thread pool
     max_val = max(arr) if arr else 0
-    
-    # Shared result list and synchronization mechanism
     result = []
-    result_lock = threading.Lock()
     
-    # Synchronization event to coordinate threads
-    start_event = threading.Event()
+    # Use thread-safe synchronized list
+    from threading import Lock
+    result_lock = Lock()
     
-    # Function to be run by each thread
-    def sort_thread(num):
-        # Wait for start signal
-        start_event.wait()
-        
-        # Sleep proportional to (normalized) number's value
+    def place_number(num):
+        # Sleep proportionally to the number's value
         time.sleep(0.001 * num / (max_val + 1))
         
-        # Safely append to shared result list
         with result_lock:
             result.append(num)
     
-    # Create threads
-    threads = [threading.Thread(target=sort_thread, args=(num,)) for num in arr]
+    # Use thread pool to manage concurrent execution
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(arr)) as executor:
+        # Submit all threads
+        futures = [executor.submit(place_number, num) for num in arr]
+        
+        # Wait for all threads to complete
+        concurrent.futures.wait(futures)
     
-    # Start all threads
-    for thread in threads:
-        thread.start()
-    
-    # Signal all threads to start simultaneously
-    start_event.set()
-    
-    # Wait for all threads to complete
-    for thread in threads:
-        thread.join()
-    
-    return result
+    return sorted(result)
