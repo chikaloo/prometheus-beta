@@ -6,7 +6,7 @@ def find_second_largest(arr):
         arr (list): A list of numbers.
 
     Returns:
-        int or None: The second largest number in the array, or None if 
+        int or float or None: The second largest number in the array, or None if 
         the array has fewer than 2 unique numbers.
 
     Raises:
