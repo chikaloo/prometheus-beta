@@ -8,6 +8,9 @@ def capitalize_words(text: str) -> str:
     Returns:
         str: A new string with the first letter of each word capitalized.
 
+    Raises:
+        AttributeError: If input is not a string.
+
     Examples:
         >>> capitalize_words("hello world")
         'Hello World'
@@ -18,6 +21,10 @@ def capitalize_words(text: str) -> str:
         >>> capitalize_words("  spaced  words  ")
         '  Spaced  Words  '
     """
+    # Validate input is a string
+    if not isinstance(text, str):
+        raise AttributeError("Input must be a string")
+    
     # Handle empty string case
     if not text:
         return text
