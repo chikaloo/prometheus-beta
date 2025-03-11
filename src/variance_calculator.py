@@ -26,6 +26,9 @@ def calculate_variance(numbers: List[Union[int, float]]) -> float:
     if not all(isinstance(x, (int, float)) for x in numbers):
         raise TypeError("All elements must be numeric")
     
+    # Convert to float to ensure precision
+    numbers = [float(x) for x in numbers]
+    
     # Calculate mean
     mean = sum(numbers) / len(numbers)
     
