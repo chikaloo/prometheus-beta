@@ -1,7 +1,6 @@
 import json
 import pprint
 import textwrap
-import inspect
 
 def log_object(obj, indent=2, max_width=80, use_json=False):
     """
@@ -27,14 +26,27 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
         except (TypeError, OverflowError):
             return False
 
-    def custom_formatter(obj, indent=2):
-        """Custom formatter for non-standard objects"""
-        # First, check if object has a dict representation
-        if hasattr(obj, '__dict__'):
-            return f"Error logging object: Unable to serialize {type(obj)}"
-        
-        # Fallback to string representation
-        return str(obj)
+    def custom_pprint(obj, indent=2, max_width=80):
+        """Custom pretty printing with forced indentation"""
+        try:
+            # Use json for serialization with forced indentation
+            formatted = json.dumps(obj, indent=indent, sort_keys=True)
+            
+            # If max_width is specified, attempt to wrap
+            if max_width < 80:
+                wrapped_lines = []
+                for line in formatted.split('\n'):
+                    if len(line) > max_width:
+                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
+                    else:
+                        wrapped_lines.append(line)
+                return '\n'.join(wrapped_lines)
+            
+            return formatted
+        except Exception:
+            # Fallback to pprint if json serialization fails
+            formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
+            return formatter.pformat(obj)
 
     try:
         # Use JSON for serialization if requested
@@ -43,12 +55,14 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
         
         # Check if directly serializable
         if is_serializable(obj):
-            # Use pprint for formatting with custom indentation
-            formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            return formatter.pformat(obj)
+            return custom_pprint(obj, indent, max_width)
         
         # Handle non-serializable objects
-        return custom_formatter(obj)
+        try:
+            # If it has a __dict__, attempt to serialize its contents
+            return custom_pprint(vars(obj), indent, max_width)
+        except Exception:
+            return f"Error logging object: Unable to serialize {type(obj)}"
     
     except Exception as e:
         # Final catch-all for any unexpected errors
