@@ -22,27 +22,33 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
         if use_json:
             # Use JSON for serialization with custom formatting
             return json.dumps(obj, indent=indent)
-        else:
-            # Handle non-serializable objects by converting to string
-            if not hasattr(obj, '__dict__') and not isinstance(obj, (dict, list, tuple, set)):
-                return str(obj)
+        
+        # Special handling for non-serializable objects
+        if not hasattr(obj, '__dict__') and not isinstance(obj, (dict, list, tuple, set)):
+            try:
+                # First try to convert to dict if it's an object with __dict__
+                obj_dict = vars(obj)
+                formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
+                return formatter.pformat(obj_dict)
+            except (TypeError, ValueError):
+                return f"Error logging object: Unable to serialize object of type {type(obj)}"
+        
+        # Use pprint for more flexible formatting
+        formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
+        formatted = formatter.pformat(obj)
 
-            # Use pprint for more flexible formatting
-            formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            formatted = formatter.pformat(obj)
-
-            # Wrap long lines if they exceed max_width
-            if max_width < 80:
-                wrapped_lines = []
-                for line in formatted.split('\n'):
-                    # If line is longer than max_width, wrap it
-                    if len(line) > max_width:
-                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
-                    else:
-                        wrapped_lines.append(line)
-                return '\n'.join(wrapped_lines)
-            
-            return formatted
-    except (TypeError, Exception) as e:
-        # Handle any serialization errors
+        # Wrap long lines if they exceed max_width
+        if max_width < 80:
+            wrapped_lines = []
+            for line in formatted.split('\n'):
+                # If line is longer than max_width, wrap it
+                if len(line) > max_width:
+                    wrapped_lines.extend(textwrap.wrap(line, width=max_width))
+                else:
+                    wrapped_lines.append(line)
+            return '\n'.join(wrapped_lines)
+        
+        return formatted
+    except Exception as e:
+        # Catch-all for any serialization errors
         return f"Error logging object: {str(e)}"
