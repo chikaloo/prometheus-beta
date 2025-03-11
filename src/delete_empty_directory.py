@@ -28,6 +28,10 @@ def delete_empty_directory(directory_path):
         raise OSError(f"Directory is not empty: {directory_path}")
 
     try:
+        # Check write permissions
+        if not os.access(directory_path, os.W_OK):
+            raise PermissionError(f"Permission denied: Cannot delete directory {directory_path}")
+
         # Remove the directory
         os.rmdir(directory_path)
     except PermissionError:
