@@ -26,6 +26,10 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
         except (TypeError, OverflowError):
             return False
 
+    def json_indent_format(obj, indent):
+        """Use JSON formatter with explicit indentation"""
+        return json.dumps(obj, indent=indent)
+
     def custom_pprint(obj, indent=2, max_width=80):
         """Custom pretty printing with forced indentation"""
         try:
@@ -35,22 +39,8 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
                 if len(obj) <= 3 and all(isinstance(x, (int, str, list)) for x in obj):
                     return str(obj)
             
-            # Use pprint for formatting
-            formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            formatted = formatter.pformat(obj)
-            
-            # If max_width is specified, aggressively wrap lines
-            if max_width < 80:
-                wrapped_lines = []
-                for line in formatted.split('\n'):
-                    # Use textwrap to break long lines
-                    if len(line) > max_width:
-                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
-                    else:
-                        wrapped_lines.append(line)
-                return '\n'.join(wrapped_lines)
-            
-            return formatted
+            # Use JSON formatting to ensure precise indentation
+            return json_indent_format(obj, indent)
         except Exception:
             # Last resort fallback
             return str(obj)
