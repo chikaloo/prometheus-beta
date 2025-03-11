@@ -18,7 +18,7 @@ def test_find_largest_file_basic():
         for filename, content in files:
             file_path = os.path.join(temp_dir, filename)
             with open(file_path, 'w') as f:
-                f.write(content * (len(content.split()[0]))
+                f.write(content * int(content.split()[0]))
         
         # Find the largest file
         largest_file = find_largest_file(temp_dir)
@@ -74,7 +74,7 @@ def test_large_file_absolute_path():
         for filename, content in files:
             file_path = os.path.join(temp_dir, filename)
             with open(file_path, 'w') as f:
-                f.write(content * (len(content.split()[0]))
+                f.write(content * int(content.split()[0]))
         
         # Find the largest file
         largest_file = find_largest_file(temp_dir)
