@@ -25,7 +25,7 @@ def test_find_second_largest_negative_numbers():
 def test_find_second_largest_mixed_types():
     """Test with mixed numeric types"""
     assert find_second_largest([1, 2.5, 3, 4.7, 5]) == 4.7
-    assert find_second_largest([1.1, 1.2, 1.3]) is None
+    assert find_second_largest([1.1, 1.2, 1.3]) == 1.2
 
 def test_find_second_largest_error_cases():
     """Test error handling"""
