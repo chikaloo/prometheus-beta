@@ -1,5 +1,6 @@
 import json
 import pprint
+import textwrap
 
 def log_object(obj, indent=2, max_width=80, use_json=False):
     """
@@ -22,9 +23,26 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
             # Use JSON for serialization with custom formatting
             return json.dumps(obj, indent=indent)
         else:
+            # Handle non-serializable objects by converting to string
+            if not hasattr(obj, '__dict__') and not isinstance(obj, (dict, list, tuple, set)):
+                return str(obj)
+
             # Use pprint for more flexible formatting
             formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            return formatter.pformat(obj)
-    except TypeError as e:
-        # Handle objects that can't be directly serialized
+            formatted = formatter.pformat(obj)
+
+            # Wrap long lines if they exceed max_width
+            if max_width < 80:
+                wrapped_lines = []
+                for line in formatted.split('\n'):
+                    # If line is longer than max_width, wrap it
+                    if len(line) > max_width:
+                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
+                    else:
+                        wrapped_lines.append(line)
+                return '\n'.join(wrapped_lines)
+            
+            return formatted
+    except (TypeError, Exception) as e:
+        # Handle any serialization errors
         return f"Error logging object: {str(e)}"
