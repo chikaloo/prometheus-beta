@@ -1,6 +1,7 @@
 import json
 import pprint
 import textwrap
+import inspect
 
 def log_object(obj, indent=2, max_width=80, use_json=False):
     """
@@ -18,43 +19,37 @@ def log_object(obj, indent=2, max_width=80, use_json=False):
     Raises:
         TypeError: If the object cannot be serialized
     """
-    # Special handling for non-serializable objects
-    def safe_serialize(obj):
-        """Try to convert object to a serializable format"""
+    def is_serializable(obj):
+        """Check if an object is JSON serializable"""
         try:
-            # If it has a __dict__ attribute, convert to dictionary
-            if hasattr(obj, '__dict__'):
-                raise TypeError("Custom object serialization needed")
-            return obj
-        except Exception:
+            json.dumps(obj)
+            return True
+        except (TypeError, OverflowError):
+            return False
+
+    def custom_formatter(obj, indent=2):
+        """Custom formatter for non-standard objects"""
+        # First, check if object has a dict representation
+        if hasattr(obj, '__dict__'):
             return f"Error logging object: Unable to serialize {type(obj)}"
+        
+        # Fallback to string representation
+        return str(obj)
 
     try:
         # Use JSON for serialization if requested
         if use_json:
             return json.dumps(obj, indent=indent)
         
-        # Check if object can be serialized
-        try:
-            # Use pprint for formatting
+        # Check if directly serializable
+        if is_serializable(obj):
+            # Use pprint for formatting with custom indentation
             formatter = pprint.PrettyPrinter(indent=indent, width=max_width)
-            result = formatter.pformat(obj)
-            
-            # If max_width is less than standard, attempt to wrap
-            if max_width < 80:
-                # Split the result and wrap each line
-                wrapped_lines = []
-                for line in result.split('\n'):
-                    if len(line) > max_width:
-                        wrapped_lines.extend(textwrap.wrap(line, width=max_width))
-                    else:
-                        wrapped_lines.append(line)
-                return '\n'.join(wrapped_lines)
-            
-            return result
-        except Exception:
-            # Fallback for custom/non-serializable objects
-            return f"Error logging object: Unable to serialize {type(obj)}"
+            return formatter.pformat(obj)
+        
+        # Handle non-serializable objects
+        return custom_formatter(obj)
+    
     except Exception as e:
-        # Final catch-all
+        # Final catch-all for any unexpected errors
         return f"Error logging object: {str(e)}"
