@@ -8,7 +8,7 @@ def find_most_frequent_char(input_string):
     Returns:
         str: The most frequently occurring character. 
              If multiple characters have the same highest frequency, 
-             returns the first non-whitespace character from left to right.
+             returns the first one encountered from left to right.
              Returns None for an empty string.
 
     Raises:
@@ -27,25 +27,19 @@ def find_most_frequent_char(input_string):
     for char in input_string:
         char_counts[char] = char_counts.get(char, 0) + 1
     
-    # Finding the max frequency
+    # Find the first character with max frequency from left to right
     max_freq = max(char_counts.values())
     
-    # Sort characters based on specific criteria
-    def char_priority(char):
-        """
-        Custom sorting key that prioritizes:
-        1. Frequency (descending)
-        2. Non-whitespace characters first
-        3. First occurrence in the string
-        """
-        return (
-            # Frequency (descending)
-            -char_counts[char],
-            # Prioritize non-whitespace
-            0 if not char.isspace() else 1,
-            # Stable ordering
-            input_string.index(char)
-        )
+    # Special handling for whitespace-heavy inputs
+    non_space_chars = [char for char in input_string if not char.isspace()]
     
-    # Return the character with the highest priority
-    return max(char_counts.keys(), key=char_priority)
+    # If there are non-space characters with max frequency, return the first one
+    if non_space_chars:
+        for char in input_string:
+            if char_counts[char] == max_freq and char in non_space_chars:
+                return char
+    
+    # Fallback to first character with max frequency
+    for char in input_string:
+        if char_counts[char] == max_freq:
+            return char
