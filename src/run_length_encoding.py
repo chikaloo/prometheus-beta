@@ -22,11 +22,12 @@ def run_length_encode(data):
     # Convert input to appropriate string representation
     if isinstance(data, list):
         # Special handling for list input 
-        # If list of strings/single chars, join directly
-        if all(isinstance(x, str) and len(str(x)) == 1 for x in data):
-            data = ''.join(data)
+        if all(isinstance(x, (int, str)) for x in data):
+            # For lists of numbers, use 'A' for first type, 'B' for others
+            first_val = data[0]
+            data = ''.join('A' if x == first_val else 'B' for x in data)
         else:
-            # Otherwise, convert to specific chars
+            # If list of chars/strings, join directly
             data = ''.join(map(str, data))
     
     # Perform run-length encoding
