@@ -18,7 +18,7 @@ def run_length_encode(data):
     
     # Handle empty input
     if not data:
-        raise ValueError("Input cannot be empty")
+        return ''
     
     # If input is a list, convert to string
     if isinstance(data, list):
@@ -26,10 +26,6 @@ def run_length_encode(data):
     
     # Perform run-length encoding
     encoded = []
-    if not data:
-        return ''
-    
-    # Start with the first character
     current_char = data[0]
     count = 1
     
