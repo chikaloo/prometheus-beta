@@ -33,7 +33,7 @@ def arithmetic_encode(data: str, prob_dist: Dict[str, float] = None) -> float:
     
     # Validate probability distribution
     if not _validate_prob_distribution(prob_dist):
-        raise ValueError("Probability distribution must sum to 1")
+        raise ValueError("Probability distribution must sum to 1 and all values must be between 0 and 1")
     
     # Initialize encoding range
     low, high = 0.0, 1.0
@@ -75,7 +75,7 @@ def arithmetic_decode(encoded_value: float, length: int,
         raise ValueError("Length must be positive")
     
     if not _validate_prob_distribution(prob_dist):
-        raise ValueError("Probability distribution must sum to 1")
+        raise ValueError("Probability distribution must sum to 1 and all values must be between 0 and 1")
     
     # Sort characters by their probabilities for efficient decoding
     sorted_chars = sorted(prob_dist.keys(), key=lambda x: prob_dist[x])
@@ -126,7 +126,7 @@ def _calculate_prob_distribution(data: str) -> Dict[str, float]:
 
 def _validate_prob_distribution(prob_dist: Dict[str, float]) -> bool:
     """
-    Validate that probabilities sum to 1 (with small floating-point tolerance).
+    Validate that probabilities sum to 1 and are between 0 and 1.
     
     Args:
         prob_dist (Dict[str, float]): Probability distribution
@@ -134,7 +134,12 @@ def _validate_prob_distribution(prob_dist: Dict[str, float]) -> bool:
     Returns:
         bool: True if probabilities are valid, False otherwise
     """
-    return abs(sum(prob_dist.values()) - 1.0) < 1e-9
+    # Check total sum
+    if not math.isclose(sum(prob_dist.values()), 1.0, abs_tol=1e-9):
+        return False
+    
+    # Check each probability is between 0 and 1
+    return all(0 <= prob <= 1 for prob in prob_dist.values())
 
 
 def _cumulative_prob_start(char: str, prob_dist: Dict[str, float], 
