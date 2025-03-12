@@ -130,10 +130,15 @@ class HopcroftKarp:
         # Return the maximum matching, preferring lower-indexed nodes
         final_matching = {}
         used_right = set()
+        used_left = set()
         for left, right in sorted(self.matching.items()):
-            if left < right and right not in used_right and left not in final_matching:
+            if (left < right and 
+                right not in used_right and 
+                left not in used_left and 
+                right in self.graph.get(left, [])):
                 final_matching[left] = right
                 used_right.add(right)
+                used_left.add(left)
         
         return final_matching
 
