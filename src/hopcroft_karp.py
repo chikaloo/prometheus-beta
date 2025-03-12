@@ -127,8 +127,15 @@ class HopcroftKarp:
                 if self.matching.get(node) is None:
                     self._dfs(node)
         
-        # Return only the actual matches (no self-matches or None values)
-        return {k: v for k, v in self.matching.items() if k < v}
+        # Return the maximum matching, preferring lower-indexed nodes
+        final_matching = {}
+        used_right = set()
+        for left, right in sorted(self.matching.items()):
+            if left < right and right not in used_right and left not in final_matching:
+                final_matching[left] = right
+                used_right.add(right)
+        
+        return final_matching
 
 def maximum_matching(graph: Dict[int, List[int]]) -> Dict[int, int]:
     """
