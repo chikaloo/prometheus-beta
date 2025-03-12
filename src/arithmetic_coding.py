@@ -5,6 +5,7 @@ This module provides functions for arithmetic coding, a data compression techniq
 that encodes the entire input by representing it as a fraction between 0 and 1.
 """
 
+import math
 from typing import Dict, Union, List
 
 
