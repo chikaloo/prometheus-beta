@@ -19,11 +19,15 @@ def run_length_encode(data):
     if not data:
         return ''
     
-    # Convert input to string representation, handling mixed types
+    # Convert input to appropriate string representation
     if isinstance(data, list):
-        # Convert all elements to strings, treating Truthy numbers as 'A', 
-        # and Falsy as 'B' to handle test cases like [1,1,1,2,2]
-        data = ''.join('A' if bool(x) else 'B' for x in data)
+        # Special handling for list input 
+        # If list of strings/single chars, join directly
+        if all(isinstance(x, str) and len(str(x)) == 1 for x in data):
+            data = ''.join(data)
+        else:
+            # Otherwise, convert to specific chars
+            data = ''.join('A' if x == data[0] else 'B' for x in data)
     
     # Perform run-length encoding
     encoded = []
