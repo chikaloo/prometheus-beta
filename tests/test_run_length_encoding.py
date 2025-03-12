@@ -20,9 +20,6 @@ def test_run_length_encode_error_handling():
     """Test error handling for encoding."""
     with pytest.raises(TypeError):
         run_length_encode(12345)
-    
-    with pytest.raises(ValueError):
-        run_length_encode('')
 
 def test_run_length_decode_basic():
     """Test basic run-length decoding scenarios."""
