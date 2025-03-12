@@ -27,7 +27,7 @@ def run_length_encode(data):
             data = ''.join(data)
         else:
             # Otherwise, convert to specific chars
-            data = ''.join('A' if x == data[0] else 'B' for x in data)
+            data = ''.join(map(str, data))
     
     # Perform run-length encoding
     encoded = []
