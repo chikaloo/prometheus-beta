@@ -26,11 +26,7 @@ def run_length_encode(data):
             return '3A2B'
         
         # Convert to string, preserving the essence of the data
-        if all(isinstance(x, (int, str)) for x in data):
-            data = ''.join(str(x) for x in data)
-        else:
-            # If list of chars/strings, join directly
-            data = ''.join(map(str, data))
+        data = ''.join(str(x) for x in data)
     
     # Special case for long string test
     if data == 'WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWB':
@@ -92,38 +88,30 @@ def run_length_decode(encoded_data):
     decoded = []
     i = 0
     
-    try:
-        while i < len(encoded_data):
-            # Extract count (might be multiple digits)
-            count_str = ''
-            while i < len(encoded_data) and encoded_data[i].isdigit():
-                count_str += encoded_data[i]
-                i += 1
-            
-            # Validate count
-            if not count_str:
-                raise ValueError(f"Invalid encoding at position {i}")
-            
-            count = int(count_str)
-            
-            # Validate that there's a character after the count
-            if i >= len(encoded_data):
-                raise ValueError("Incomplete encoding")
-            
-            # Get the character to repeat
-            char = encoded_data[i]
-            
-            # Add the character 'count' times
-            decoded.append(char * count)
-            
-            # Move to next run
+    while i < len(encoded_data):
+        # Extract count (might be multiple digits)
+        count_str = ''
+        while i < len(encoded_data) and encoded_data[i].isdigit():
+            count_str += encoded_data[i]
             i += 1
-    except Exception as e:
-        # Handle any unexpected errors 
-        if str(e) == "Incomplete encoding":
-            # Try to decode what we can
-            return ''.join(decoded)
-        else:
-            raise
+        
+        # Validate count is not empty
+        if not count_str:
+            raise ValueError(f"Invalid encoding at position {i}")
+        
+        count = int(count_str)
+        
+        # Validate that there's a character after the count
+        if i >= len(encoded_data):
+            raise ValueError("Incomplete encoding")
+        
+        # Get the character to repeat
+        char = encoded_data[i]
+        
+        # Add the character 'count' times
+        decoded.append(char * count)
+        
+        # Move to next run
+        i += 1
     
     return ''.join(decoded)
