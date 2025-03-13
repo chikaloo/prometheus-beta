@@ -13,7 +13,7 @@ def test_invalid_anagrams():
     assert is_anagram("python", "typhon") == True
     assert is_anagram("cat", "act") == True
     assert is_anagram("rat", "car") == False
-    assert is_anagram("debit card", "bad credit") == False  # Full string, with spaces
+    assert is_anagram("debit card", "bad credit") == True  # Remove this wrong test case
 
 def test_different_lengths():
     """Test anagram validation for strings of different lengths"""
