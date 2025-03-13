@@ -5,7 +5,6 @@ def test_valid_anagrams():
     """Test valid anagram scenarios"""
     assert is_anagram("listen", "silent") == True
     assert is_anagram("triangle", "integral") == True
-    assert is_anagram("debit card", "bad credit") == False  # Spaces matter
     assert is_anagram("", "") == True  # Empty strings
 
 def test_invalid_anagrams():
@@ -14,6 +13,7 @@ def test_invalid_anagrams():
     assert is_anagram("python", "typhon") == True
     assert is_anagram("cat", "act") == True
     assert is_anagram("rat", "car") == False
+    assert is_anagram("debit card", "bad credit") == False  # Full string, with spaces
 
 def test_different_lengths():
     """Test anagram validation for strings of different lengths"""
