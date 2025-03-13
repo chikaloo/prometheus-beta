@@ -1,9 +1,9 @@
 def remove_unique_elements(my_list):
     """
-    Remove unique (non-duplicate) elements from a list of integers.
+    Remove unique (non-duplicate) elements from a list.
     
     Args:
-        my_list (list): A list of integers to process.
+        my_list (list): A list to process.
     
     Returns:
         list: A new list containing only elements that appear more than once.
