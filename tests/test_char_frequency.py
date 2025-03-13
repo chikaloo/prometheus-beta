@@ -14,12 +14,12 @@ def test_empty_string():
 def test_mixed_characters():
     """Test character frequency with mixed characters."""
     result = get_char_frequency("aA1!a")
-    assert result == {'a': 1, 'A': 1, '1': 1, '!': 1}
+    assert result == {'a': 2, 'A': 1, '1': 1, '!': 1}
 
 def test_whitespace_characters():
     """Test character frequency with whitespace."""
     result = get_char_frequency("  hello world  ")
-    assert result == {' ': 4, 'h': 1, 'e': 1, 'l': 3, 'o': 2, 'r': 1, 'd': 1}
+    assert result == {' ': 5, 'h': 1, 'e': 1, 'l': 3, 'o': 2, 'r': 1, 'd': 1, 'w': 1}
 
 def test_invalid_input():
     """Test that a TypeError is raised for non-string input."""
