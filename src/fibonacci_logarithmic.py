@@ -10,10 +10,15 @@ def fibonacci_log_time(n):
     
     Raises:
         ValueError: If n is negative
+        TypeError: If n is not an integer
     
     Time Complexity: O(log n)
     Space Complexity: O(1)
     """
+    # Type checking
+    if not isinstance(n, int):
+        raise TypeError("Input must be an integer")
+    
     # Handle edge cases
     if n < 0:
         raise ValueError("Input must be a non-negative integer")
