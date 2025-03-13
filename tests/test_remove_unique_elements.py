@@ -17,8 +17,9 @@ def test_remove_unique_elements():
     # Test list with repeated elements of same value
     assert remove_unique_elements([5, 5, 5, 5]) == [5]
     
-    # Test mixed types (though function is type-hinted for integers)
-    assert sorted(remove_unique_elements([1, 1, 'a', 'a', 2, 3])) == [1, 'a']
+    # Test mixed types (unordered check)
+    mixed_result = remove_unique_elements([1, 1, 'a', 'a', 2, 3])
+    assert set(mixed_result) == {1, 'a'}
 
 def test_input_preservation():
     # Ensure original list is not modified
