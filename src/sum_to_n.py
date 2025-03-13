@@ -12,6 +12,7 @@ def sum_to_n(n: int) -> int:
     
     Raises:
         ValueError: If n is negative.
+        TypeError: If n is not an integer.
     
     Examples:
         >>> sum_to_n(5)
@@ -19,6 +20,10 @@ def sum_to_n(n: int) -> int:
         >>> sum_to_n(0)
         0
     """
+    # Check input type
+    if not isinstance(n, int):
+        raise TypeError("Input must be an integer")
+    
     # Check for negative input
     if n < 0:
         raise ValueError("Input must be a non-negative integer")
