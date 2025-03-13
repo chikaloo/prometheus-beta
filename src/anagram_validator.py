@@ -3,8 +3,10 @@ def is_anagram(str1: str, str2: str) -> bool:
     Determine if two strings are valid anagrams of each other.
     
     An anagram is a word or phrase formed by rearranging the letters of another,
-    using all the original letters exactly once. This implementation is case-sensitive
-    and assumes only lowercase letters.
+    using all the original letters exactly once. This implementation:
+    - is case-sensitive
+    - assumes only lowercase letters
+    - ignores whitespace
     
     Args:
         str1 (str): The first input string (lowercase letters only)
@@ -16,6 +18,10 @@ def is_anagram(str1: str, str2: str) -> bool:
     Raises:
         ValueError: If input strings contain non-lowercase letters
     """
+    # Remove whitespace from both strings
+    str1 = str1.replace(" ", "")
+    str2 = str2.replace(" ", "")
+    
     # Validate input: check if strings contain only lowercase letters
     if not (str1.islower() and str2.islower()):
         raise ValueError("Input strings must contain only lowercase letters")
