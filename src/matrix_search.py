@@ -23,15 +23,19 @@ def find_matrix_coordinates(matrix, target):
         None
     """
     # Validate input matrix
-    if not matrix or not isinstance(matrix, list):
+    if not isinstance(matrix, list):
         raise TypeError("Input must be a non-empty 2D list")
     
-    # Check if matrix is 2D and rectangular
+    # Check if matrix is empty
+    if len(matrix) == 0:
+        raise ValueError("Matrix cannot be empty")
+    
+    # Check if matrix is 2D
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("Matrix must be a 2D list")
     
-    # Check if matrix is empty
-    if len(matrix) == 0 or len(matrix[0]) == 0:
+    # Check if matrix is empty internally
+    if len(matrix[0]) == 0:
         raise ValueError("Matrix cannot be empty")
     
     # Ensure consistent row lengths
