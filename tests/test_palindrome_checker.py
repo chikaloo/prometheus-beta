@@ -26,8 +26,8 @@ def test_is_palindrome_edge_cases():
 
 def test_is_palindrome_special_characters():
     assert is_palindrome("!@#$%^&*()") == True
-    assert is_palindrome("a!b@c#") == True
-    assert is_palindrome("ab!c") == False
+    assert is_palindrome("a!b@c#") == False  # Changed to False as it's not a palindrome when special chars are removed
+    assert is_palindrome("ab!ba") == True
 
 def test_is_palindrome_numbers():
     assert is_palindrome("12321") == True
