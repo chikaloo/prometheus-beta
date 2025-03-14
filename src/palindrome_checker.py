@@ -18,7 +18,7 @@ def is_palindrome(s: str) -> bool:
         >>> is_palindrome("")
         True
     """
-    # Remove non-alphanumeric characters and convert to lowercase
+    # Remove all non-alphanumeric characters and convert to lowercase
     cleaned_str = re.sub(r'[^a-zA-Z0-9]', '', s.lower())
     
     # Check if the cleaned string reads the same forwards and backwards
