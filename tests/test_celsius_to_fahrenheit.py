@@ -10,7 +10,7 @@ def test_celsius_to_fahrenheit_positive():
 def test_celsius_to_fahrenheit_negative():
     """Test conversion of negative Celsius temperatures."""
     assert celsius_to_fahrenheit(-40) == -40.0
-    assert celsius_to_fahrenheit(-273.15) == -459.67
+    assert round(celsius_to_fahrenheit(-273.15), 2) == -459.67
 
 def test_celsius_to_fahrenheit_float():
     """Test conversion with float values."""
