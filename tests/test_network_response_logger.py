@@ -20,12 +20,33 @@ class TestNetworkResponseLogger:
         self.logger = logging.getLogger('test_logger')
         self.logger.setLevel(logging.INFO)
         
+        # Reset the logger
+        while self.logger.handlers:
+            self.logger.removeHandler(self.logger.handlers[0])
+        
         # Custom handler to capture log messages
         class CaptureHandler(logging.Handler):
+            def __init__(self, message_list):
+                """
+                Initialize the handler with a list to store messages.
+                
+                Args:
+                    message_list (list): List to store log messages
+                """
+                super().__init__()
+                self.message_list = message_list
+            
             def emit(self, record):
-                self.log_messages.append(self.format(record))
+                """
+                Add the formatted log record to the message list.
+                
+                Args:
+                    record (logging.LogRecord): Log record to format and store
+                """
+                self.message_list.append(self.format(record))
         
-        self.capture_handler = CaptureHandler()
+        # Create capture handler with reference to log_messages
+        self.capture_handler = CaptureHandler(self.log_messages)
         self.capture_handler.setFormatter(logging.Formatter('%(message)s'))
         self.logger.addHandler(self.capture_handler)
     
