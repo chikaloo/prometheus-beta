@@ -92,17 +92,26 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
     # Create reverse mapping for decoding
     reverse_mapping = {code: symbol for symbol, code in encoded_data.items()}
     
+    # Validate codes are unique and prevent case like 0 is prefix of 01
+    codes = list(reverse_mapping.keys())
+    for i, code1 in enumerate(codes):
+        for code2 in codes[i+1:]:
+            if code1.startswith(code2) or code2.startswith(code1):
+                raise ValueError("Incomplete or invalid encoded message")
+    
     decoded_message = []
     current_code = ''
     
     for bit in encoded_message:
         current_code += bit
+        
+        # Ensure the current code matches an existing code
         if current_code in reverse_mapping:
             decoded_message.append(reverse_mapping[current_code])
             current_code = ''
         
-        # Add additional check for invalid decoding
-        if not any(code.startswith(current_code) for code in reverse_mapping):
+        # If no existing code starts with the current code, it's invalid
+        elif not any(code.startswith(current_code) for code in reverse_mapping):
             raise ValueError("Incomplete or invalid encoded message")
     
     # Check if entire message was decoded
