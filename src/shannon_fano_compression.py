@@ -81,6 +81,10 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
     Raises:
         ValueError: If decoding is not possible
     """
+    # Validate input
+    if not encoded_message or not encoded_data:
+        raise ValueError("Incomplete or invalid encoded message")
+    
     # Create reverse mapping for decoding
     reverse_mapping = {code: symbol for symbol, code in encoded_data.items()}
     
@@ -94,7 +98,10 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
             current_code = ''
     
     # Check if entire message was decoded
-    if current_code or not decoded_message:
+    if current_code:
+        raise ValueError("Incomplete or invalid encoded message")
+    
+    if not decoded_message:
         raise ValueError("Incomplete or invalid encoded message")
     
     return ''.join(decoded_message)
