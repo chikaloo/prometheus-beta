@@ -51,6 +51,10 @@ def test_shannon_fano_decode_invalid():
     """Test decoding with invalid input"""
     encoding = {'A': '0', 'B': '1'}
     
+    def test_decode_case(encoded_message):
+        with pytest.raises(ValueError, match="Incomplete or invalid encoded message"):
+            shannon_fano_decode(encoding, encoded_message)
+    
     # Test various scenarios that should raise an error
     error_inputs = [
         '010101',    # A mix of bits not decodable by the given encoding
@@ -58,11 +62,12 @@ def test_shannon_fano_decode_invalid():
         '10101',     # Unmatched bit sequences
         '',          # Empty string
         '00101',     # Partially matching but invalid code
+        '11',        # Invalid sequence
+        '22',        # Invalid characters
     ]
     
     for invalid_message in error_inputs:
-        with pytest.raises(ValueError, match="Incomplete or invalid encoded message"):
-            shannon_fano_decode(encoding, invalid_message)
+        test_decode_case(invalid_message)
 
 def test_shannon_fano_complex_encoding():
     """Test encoding with complex frequency distribution"""
