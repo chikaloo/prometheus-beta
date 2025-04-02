@@ -54,9 +54,10 @@ def test_shannon_fano_decode_invalid():
     # Test various scenarios that should raise an error
     error_inputs = [
         '010101',    # A mix of bits not decodable by the given encoding
-        '00000',     # Will trigger the error on remaining bits
+        '00000',     # Bits that don't match any code
         '10101',     # Unmatched bit sequences
         '',          # Empty string
+        '00101',     # Partially matching but invalid code
     ]
     
     for invalid_message in error_inputs:
