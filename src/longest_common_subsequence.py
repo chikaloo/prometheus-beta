@@ -36,9 +36,10 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if str1 == str2:
         return str1
     
-    # Case-sensitive comparison only
-    def find_lcs(s1, s2):
+    # Find the longest common subsequence with strict matching
+    def find_strict_lcs(s1, s2):
         m, n = len(s1), len(s2)
+        
         # Create a matrix to store LCS lengths
         dp = [[0] * (n + 1) for _ in range(m + 1)]
         
@@ -70,21 +71,28 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
         # Reverse to get correct order
         return ''.join(reversed(lcs))
     
-    # Find the LCS with strict case-sensitive matching
-    result = find_lcs(str1, str2)
+    # Find the longest common subsequence
+    lcs = find_strict_lcs(str1, str2)
     
-    # Ensure that the result is an exact subsequence
-    # This means it must match exactly in the original strings
-    def is_exact_subsequence(seq, s):
-        j = 0
-        for char in seq:
-            # Try to find each character from the subsequence in the string
-            # in the order they appear
-            while j < len(s) and s[j] != char:
+    # Verify that the LCS is a valid subsequence in both strings
+    def is_valid_subsequence(sequence, full_string):
+        if not sequence:
+            return True
+        
+        j = 0  # Index for full_string
+        for char in sequence:
+            # Find the next matching character
+            while j < len(full_string) and full_string[j] != char:
                 j += 1
-            if j >= len(s):
+            
+            # If we can't find the character, it's not a valid subsequence
+            if j >= len(full_string):
                 return False
+            
+            # Move to next character
             j += 1
+        
         return True
     
-    return result if is_exact_subsequence(result, str1) and is_exact_subsequence(result, str2) else ""
+    # Return the LCS only if it's a valid subsequence in both strings
+    return lcs if is_valid_subsequence(lcs, str1) and is_valid_subsequence(lcs, str2) else ""
