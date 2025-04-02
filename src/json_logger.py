@@ -19,7 +19,7 @@ def log_json(logger, level, json_obj, message=None):
         None
     """
     # Validate inputs
-    if not isinstance(logger, logging.Logger):
+    if not hasattr(logger, 'log'):
         raise TypeError("First argument must be a valid logging.Logger instance")
     
     if not isinstance(json_obj, dict):
