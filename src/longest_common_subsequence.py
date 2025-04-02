@@ -74,25 +74,23 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     # Find the longest common subsequence
     lcs = find_strict_lcs(str1, str2)
     
-    # Verify that the LCS is a valid subsequence in both strings
-    def is_valid_subsequence(sequence, full_string):
-        if not sequence:
-            return True
+    # Verify the subsequence is exact in both strings
+    def is_exact_subsequence(seq, s):
+        if not seq:
+            return False
         
-        j = 0  # Index for full_string
-        for char in sequence:
-            # Find the next matching character
-            while j < len(full_string) and full_string[j] != char:
-                j += 1
-            
-            # If we can't find the character, it's not a valid subsequence
-            if j >= len(full_string):
-                return False
-            
-            # Move to next character
+        i = 0  # Index for sequence
+        j = 0  # Index for string
+        
+        while j < len(s) and i < len(seq):
+            if s[j] == seq[i]:
+                i += 1
             j += 1
         
-        return True
+        # Exact match means we must consume entire sequence
+        return i == len(seq)
     
-    # Return the LCS only if it's a valid subsequence in both strings
-    return lcs if is_valid_subsequence(lcs, str1) and is_valid_subsequence(lcs, str2) else ""
+    # Only return LCS if it's an exact, non-empty subsequence in both strings
+    return lcs if (lcs and 
+                   is_exact_subsequence(lcs, str1) and 
+                   is_exact_subsequence(lcs, str2)) else ""
