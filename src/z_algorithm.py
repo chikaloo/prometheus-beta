@@ -57,17 +57,10 @@ def z_algorithm(text, pattern):
     combined = pattern + '$' + text
     z_array = compute_z_array(combined)
     
-    # Find match indices without overlaps
+    # Find match indices 
     match_indices = []
-    seen_indices = set()
     for i in range(len(pattern) + 1, len(combined)):
-        if z_array[i] == len(pattern):
-            index = i - len(pattern) - 1
-            # Ensure no overlapping matches
-            if all(index < prev_index - len(pattern) or 
-                   index > prev_index + len(pattern) 
-                   for prev_index in seen_indices):
-                match_indices.append(index)
-                seen_indices.add(index)
+        if z_array[i] >= len(pattern):
+            match_indices.append(i - len(pattern) - 1)
     
-    return sorted(match_indices)
+    return match_indices
