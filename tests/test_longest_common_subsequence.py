@@ -23,6 +23,7 @@ def test_no_common_subsequence():
 def test_case_sensitivity():
     """Test case sensitivity"""
     assert longest_common_subsequence("Hello", "hello") == ""
+    assert longest_common_subsequence("HELLO", "WORLD") == ""
 
 def test_partial_matches():
     """Test partial matches"""
@@ -37,9 +38,14 @@ def test_type_error():
     with pytest.raises(TypeError):
         longest_common_subsequence(None, "test")
 
-def test_unicode_support():
-    """Test Unicode character support"""
+def test_unicode_handling():
+    """Test Unicode character handling"""
+    # Exact unicode matching
     assert longest_common_subsequence("こんにちは", "こんばんは") == "こん"
+    # Different unicode sequences
+    assert longest_common_subsequence("こんにちは", "こんにちは世界") == "こんにちは"
+    # No common unicode sequence
+    assert longest_common_subsequence("こんにちは", "さようなら") == ""
 
 def test_repeated_subsequence():
     """Test repeated subsequence"""
