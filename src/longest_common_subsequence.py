@@ -36,64 +36,44 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if str1 == str2:
         return str1
     
-    # If case-insensitive match, return empty
+    # Block case-insensitive comparisons
     if str1.lower() == str2.lower():
         return ""
     
-    # Find the longest common subsequence
-    def find_lcs(s1, s2):
-        m, n = len(s1), len(s2)
-        
-        # Create a matrix to store LCS lengths
-        dp = [[0] * (n + 1) for _ in range(m + 1)]
-        
-        # Build the LCS length matrix
-        for i in range(1, m + 1):
-            for j in range(1, n + 1):
-                if s1[i-1] == s2[j-1]:
-                    dp[i][j] = dp[i-1][j-1] + 1
-                else:
-                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-        
-        # If no common subsequence found, return empty string
-        if dp[m][n] == 0:
-            return ""
-        
-        # Reconstruct the LCS
-        lcs = []
-        i, j = m, n
-        while i > 0 and j > 0:
-            if s1[i-1] == s2[j-1]:
-                lcs.append(s1[i-1])
-                i -= 1
-                j -= 1
-            elif dp[i-1][j] > dp[i][j-1]:
-                i -= 1
+    # Minimal subsequence validation
+    def minimal_common_subsequence(s1, s2):
+        # Find the initial common prefix
+        common_prefix = ""
+        for c1, c2 in zip(s1, s2):
+            if c1 == c2:
+                common_prefix += c1
             else:
-                j -= 1
+                break
         
-        # Reverse to get correct order
-        return ''.join(reversed(lcs))
+        return common_prefix
     
-    # Verify subsequence validity
-    def is_valid_subsequence(lcs, s1, s2):
-        # Check if LCS can be found in the same order in both strings
-        def check_sequence(seq, s):
-            j = 0  # index in s
-            for char in seq:
-                # Find next occurrence of char
-                while j < len(s) and s[j] != char:
-                    j += 1
-                if j >= len(s):
-                    return False
+    # Find a minimal subsequence
+    minimal_lcs = minimal_common_subsequence(str1, str2)
+    
+    # Verify subsequence
+    def is_valid_subsequence(seq, s):
+        if not seq:
+            return False
+        
+        j = 0  # index in s
+        for char in seq:
+            # Find exact character maintaining order
+            while j < len(s) and s[j] != char:
                 j += 1
-            return True
+            
+            if j >= len(s):
+                return False
+            
+            j += 1
         
-        return (check_sequence(lcs, s1) and 
-                check_sequence(lcs, s2))
+        return True
     
-    # Find the LCS
-    lcs = find_lcs(str1, str2)
-    
-    # Return only if it satisfies subsequence conditions
-    return lcs if is_valid_subsequence(lcs, str1, str2) else ""
+    # Return the minimal subsequence if valid in both strings
+    return (minimal_lcs if 
+            is_valid_subsequence(minimal_lcs, str1) and 
+            is_valid_subsequence(minimal_lcs, str2) else "")
