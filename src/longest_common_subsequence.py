@@ -32,40 +32,59 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if not str1 or not str2:
         return ""
     
-    # Identical strings case
+    # Identical strings case (exact match including case)
     if str1 == str2:
         return str1
     
-    # Create a matrix to store LCS lengths
-    m, n = len(str1), len(str2)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    
-    # Build the LCS length matrix
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if str1[i-1] == str2[j-1]:
-                dp[i][j] = dp[i-1][j-1] + 1
+    # Case-sensitive comparison only
+    def find_lcs(s1, s2):
+        m, n = len(s1), len(s2)
+        # Create a matrix to store LCS lengths
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        
+        # Build the LCS length matrix
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if s1[i-1] == s2[j-1]:
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+        
+        # If no common subsequence found, return empty string
+        if dp[m][n] == 0:
+            return ""
+        
+        # Reconstruct the LCS
+        lcs = []
+        i, j = m, n
+        while i > 0 and j > 0:
+            if s1[i-1] == s2[j-1]:
+                lcs.append(s1[i-1])
+                i -= 1
+                j -= 1
+            elif dp[i-1][j] > dp[i][j-1]:
+                i -= 1
             else:
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+                j -= 1
+        
+        # Reverse to get correct order
+        return ''.join(reversed(lcs))
     
-    # If no common subsequence found, return empty string
-    if dp[m][n] == 0:
-        return ""
+    # Find the LCS with strict case-sensitive matching
+    result = find_lcs(str1, str2)
     
-    # Reconstruct the LCS
-    lcs = []
-    i, j = m, n
-    while i > 0 and j > 0:
-        if str1[i-1] == str2[j-1]:
-            lcs.append(str1[i-1])
-            i -= 1
-            j -= 1
-        elif dp[i-1][j] > dp[i][j-1]:
-            i -= 1
-        else:
-            j -= 1
+    # Ensure that the result is an exact subsequence
+    # This means it must match exactly in the original strings
+    def is_exact_subsequence(seq, s):
+        j = 0
+        for char in seq:
+            # Try to find each character from the subsequence in the string
+            # in the order they appear
+            while j < len(s) and s[j] != char:
+                j += 1
+            if j >= len(s):
+                return False
+            j += 1
+        return True
     
-    # Reverse to get correct order
-    result = ''.join(reversed(lcs))
-    
-    return result
+    return result if is_exact_subsequence(result, str1) and is_exact_subsequence(result, str2) else ""
