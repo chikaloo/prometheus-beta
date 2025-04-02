@@ -82,18 +82,26 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
         ValueError: If decoding is not possible
     """
     # Validate input
+    if encoded_message is None or encoded_data is None:
+        raise ValueError("Incomplete or invalid encoded message")
+    
+    encoded_message = str(encoded_message)
+    
+    # Validate input data is not empty
     if not encoded_message or not encoded_data:
         raise ValueError("Incomplete or invalid encoded message")
     
-    # Validate encoding contains only 0s and 1s
+    # Validate encoded message contains only 0s and 1s
     if not all(bit in '01' for bit in encoded_message):
         raise ValueError("Incomplete or invalid encoded message")
     
-    # Create code mappings
-    codes = list(encoded_data.values())
-    symbols = list(encoded_data.keys())
+    # Create reverse mapping for decoding
+    reverse_mapping = {code: symbol for symbol, code in encoded_data.items()}
     
-    # Validate no codes are prefixes of other codes
+    # Validate codes are unique prefix codes
+    codes = list(reverse_mapping.keys())
+    
+    # Check for prefix code overlap
     def is_prefix_free(codes):
         for i, code1 in enumerate(codes):
             for code2 in codes[i+1:]:
@@ -104,27 +112,32 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
     if not is_prefix_free(codes):
         raise ValueError("Incomplete or invalid encoded message")
     
-    # Set up decoding
+    # Decoding
     decoded_message = []
     current_code = ''
     
     for bit in encoded_message:
         current_code += bit
         
-        # Check if current code is valid
-        matching_symbol_indices = [i for i, code in enumerate(codes) if code == current_code]
+        # Find matching code
+        matching_codes = [code for code in codes if code == current_code]
         
-        if matching_symbol_indices:
-            # Found a valid symbol
-            decoded_message.append(symbols[matching_symbol_indices[0]])
+        if matching_codes:
+            # Decode the current code
+            symbol = reverse_mapping[matching_codes[0]]
+            decoded_message.append(symbol)
             current_code = ''
         else:
-            # Check if any prefix exists
-            if not any(current_code == code[:len(current_code)] for code in codes):
-                # If no prefix matches, it's an invalid sequence
+            # Check if current code is a potential prefix
+            if not any(code.startswith(current_code) for code in codes):
+                # No valid prefix, raise error
+                raise ValueError("Incomplete or invalid encoded message")
+            
+            # Prevent excessive code length
+            if len(current_code) > max(len(code) for code in codes):
                 raise ValueError("Incomplete or invalid encoded message")
     
-    # Final validations
+    # Final validation
     if current_code:
         raise ValueError("Incomplete or invalid encoded message")
     
