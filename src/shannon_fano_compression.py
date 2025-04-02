@@ -94,7 +94,7 @@ def shannon_fano_decode(encoded_data: Dict[str, str], encoded_message: str) -> s
             current_code = ''
     
     # Check if entire message was decoded
-    if current_code:
+    if current_code or not decoded_message:
         raise ValueError("Incomplete or invalid encoded message")
     
     return ''.join(decoded_message)
