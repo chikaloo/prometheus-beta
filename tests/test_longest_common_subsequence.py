@@ -40,10 +40,10 @@ def test_type_error():
 
 def test_unicode_handling():
     """Test Unicode character handling"""
-    # Exact unicode matching
+    # Exact unicode matching and minimal common subsequence
     assert longest_common_subsequence("こんにちは", "こんばんは") == "こん"
-    # Different unicode sequences
-    assert longest_common_subsequence("こんにちは", "こんにちは世界") == "こんにちは"
+    # Exact unicode matching with different lengths
+    assert longest_common_subsequence("こんにちは世界", "こんにちは") == "こんにちは"
     # No common unicode sequence
     assert longest_common_subsequence("こんにちは", "さようなら") == ""
 
