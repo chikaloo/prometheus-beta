@@ -34,31 +34,27 @@ def build_cartesian_tree(arr):
     if not arr:
         return None
     
-    # Initialize the root as the first element
-    root = Node(arr[0])
+    # Create nodes for each element
+    nodes = [Node(val) for val in arr]
     
-    # Stack to maintain the tree structure
-    stack = [root]
+    for i in range(1, len(nodes)):
+        # Find the right ancestor where new node becomes a right child
+        j = i - 1
+        while j >= 0 and nodes[j].value <= nodes[i].value:
+            j -= 1
+        
+        # If found a valid ancestor
+        if j >= 0:
+            # Set current node as right child of this ancestor
+            nodes[j].right = nodes[i]
+        
+        # Set parent for the current node if one exists
+        if i > 0:
+            parent = j
+            nodes[i].left = parent >= 0 and nodes[parent] or None
     
-    # Iterate through the rest of the array
-    for value in arr[1:]:
-        # Create new node for current value
-        current = Node(value)
-        
-        # Find the right-most node smaller than current value
-        while stack and stack[-1].value < value:
-            # This node becomes left child of current node
-            current.left = stack.pop()
-        
-        # If stack is not empty, current becomes right child of top element
-        if stack:
-            stack[-1].right = current
-        
-        # Push current node to stack
-        stack.append(current)
-    
-    # Return the root of the Cartesian tree
-    return root
+    # Return the root node (last inserted node if no root is present)
+    return nodes[len(nodes)-1]
 
 def cartesian_tree_sort(arr):
     """
@@ -102,14 +98,16 @@ def cartesian_tree_sort(arr):
         if not node:
             return
         
-        # Traverse left subtree
-        in_order_traversal(node.left)
+        # Traverse left subtree first
+        if node.left:
+            in_order_traversal(node.left)
         
         # Add current node's value to sorted array
         sorted_arr.append(node.value)
         
-        # Traverse right subtree
-        in_order_traversal(node.right)
+        # Traverse right subtree last
+        if node.right:
+            in_order_traversal(node.right)
     
     # Perform in-order traversal
     in_order_traversal(tree_root)
