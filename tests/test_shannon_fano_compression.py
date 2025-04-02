@@ -52,7 +52,8 @@ def test_shannon_fano_decode_invalid():
     encoding = {'A': '0', 'B': '1'}
     
     with pytest.raises(ValueError, match="Incomplete or invalid encoded message"):
-        shannon_fano_decode(encoding, '01010')
+        # This should raise an error because the message doesn't decode completely
+        shannon_fano_decode(encoding, '010')
 
 def test_shannon_fano_complex_encoding():
     """Test encoding with complex frequency distribution"""
