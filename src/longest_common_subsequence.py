@@ -36,23 +36,49 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if str1 == str2:
         return str1
     
-    # Find the minimal common subsequence
-    def find_minimal_lcs(s1, s2):
-        # If strings differ in case or content, return empty string
-        if any(a != b for a, b in zip(s1, s2)):
+    # For case-sensitive check
+    def is_same_case(a, b):
+        return a.isupper() == b.isupper()
+    
+    # Find the longest common subsequence
+    def find_lcs(s1, s2):
+        m, n = len(s1), len(s2)
+        
+        # Create a matrix to store LCS lengths
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        
+        # Build the LCS length matrix
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if s1[i-1] == s2[j-1] and is_same_case(s1[i-1], s2[j-1]):
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+        
+        # If no common subsequence found, return empty string
+        if dp[m][n] == 0:
             return ""
         
-        # Find the common prefix
-        prefix = ""
-        for c1, c2 in zip(s1, s2):
-            if c1 == c2:
-                prefix += c1
+        # Reconstruct the LCS
+        lcs = []
+        i, j = m, n
+        while i > 0 and j > 0:
+            if s1[i-1] == s2[j-1] and is_same_case(s1[i-1], s2[j-1]):
+                lcs.append(s1[i-1])
+                i -= 1
+                j -= 1
+            elif dp[i-1][j] > dp[i][j-1]:
+                i -= 1
             else:
-                break
+                j -= 1
         
-        return prefix
+        # Reverse to get correct order
+        return ''.join(reversed(lcs))
     
-    # Verify exact minimal subsequence
+    # Find the LCS
+    lcs = find_lcs(str1, str2)
+    
+    # Verify the subsequence is exact in both strings
     def is_exact_subsequence(seq, s):
         if not seq:
             return False
@@ -69,9 +95,6 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             j += 1
         
         return True
-    
-    # Find the LCS
-    lcs = find_minimal_lcs(str1, str2)
     
     # Return only if it's an exact subsequence in both strings
     return lcs if is_exact_subsequence(lcs, str1) and is_exact_subsequence(lcs, str2) else ""
