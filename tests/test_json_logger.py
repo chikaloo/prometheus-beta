@@ -10,6 +10,12 @@ class MockLogger:
     
     def log(self, level, message):
         self.logs.append((level, message))
+    
+    def info(self, message):
+        self.log(logging.INFO, message)
+    
+    def debug(self, message):
+        self.log(logging.DEBUG, message)
 
 def test_log_json_without_message():
     logger = MockLogger()
