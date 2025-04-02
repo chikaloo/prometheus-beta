@@ -36,8 +36,8 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if str1 == str2:
         return str1
     
-    # Find the longest common subsequence with strict matching
-    def find_strict_lcs(s1, s2):
+    # Find the minimal common subsequence
+    def find_minimal_lcs(s1, s2):
         m, n = len(s1), len(s2)
         
         # Create a matrix to store LCS lengths
@@ -55,12 +55,14 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
         if dp[m][n] == 0:
             return ""
         
-        # Reconstruct the LCS
+        # Find minimal subsequence
         lcs = []
         i, j = m, n
+        candidates = []
+        
         while i > 0 and j > 0:
             if s1[i-1] == s2[j-1]:
-                lcs.append(s1[i-1])
+                candidates.append(s1[i-1])
                 i -= 1
                 j -= 1
             elif dp[i-1][j] > dp[i][j-1]:
@@ -69,28 +71,28 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
                 j -= 1
         
         # Reverse to get correct order
-        return ''.join(reversed(lcs))
+        return ''.join(reversed(candidates))
     
-    # Find the longest common subsequence
-    lcs = find_strict_lcs(str1, str2)
+    # Find the LCS
+    lcs = find_minimal_lcs(str1, str2)
     
     # Verify the subsequence is exact in both strings
     def is_exact_subsequence(seq, s):
         if not seq:
             return False
         
-        i = 0  # Index for sequence
-        j = 0  # Index for string
-        
-        while j < len(s) and i < len(seq):
-            if s[j] == seq[i]:
-                i += 1
+        j = 0  # Index for the full string
+        for char in seq:
+            # Find the exact character in the string maintaining original order
+            while j < len(s) and s[j] != char:
+                j += 1
+            
+            if j >= len(s):
+                return False
+            
             j += 1
         
-        # Exact match means we must consume entire sequence
-        return i == len(seq)
+        return True
     
-    # Only return LCS if it's an exact, non-empty subsequence in both strings
-    return lcs if (lcs and 
-                   is_exact_subsequence(lcs, str1) and 
-                   is_exact_subsequence(lcs, str2)) else ""
+    # Return only if it's an exact subsequence in both strings
+    return lcs if is_exact_subsequence(lcs, str1) and is_exact_subsequence(lcs, str2) else ""
