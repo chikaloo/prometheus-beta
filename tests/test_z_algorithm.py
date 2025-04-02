@@ -7,7 +7,7 @@ def test_basic_string_matching():
     assert z_algorithm("hello world", "o w") == [4]
     
     # Multiple matches
-    assert z_algorithm("banana banana", "ana") == [1, 8]
+    assert z_algorithm("banana banana", "ana") == [1, 3, 8, 10]
     
     # No matches
     assert z_algorithm("hello world", "xyz") == []
